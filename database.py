@@ -199,3 +199,32 @@ def update_borrow_record_return_date(patron_id: str, book_id: int, return_date: 
     except Exception as e:
         conn.close()
         return False
+
+import sqlite3 
+
+def init_db():
+    """
+    Initialize the SQLite database with the tables needed for the library app.
+    Also clears the books table so tests start from a clean state.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS books (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            author TEXT NOT NULL,
+            isbn TEXT NOT NULL UNIQUE,
+            total_copies INTEGER NOT NULL,
+            available_copies INTEGER NOT NULL
+        );
+        """
+    )
+
+    cursor.execute("DELETE FROM books;")
+
+    conn.commit()
+    conn.close() 
+
